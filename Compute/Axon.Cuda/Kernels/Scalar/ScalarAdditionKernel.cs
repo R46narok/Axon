@@ -3,11 +3,9 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using Axon.Cuda.Common;
 using Axon.Cuda.Common.Execution;
-using Axon.Cuda.Common.Interop;
 
 namespace Axon.Cuda.Kernels;
 
-[KernelEntryPoint("add_scalar")]
 public class ScalarAdditionKernel : KernelBase<ScalarKernelOptions>
 {
     [DllImport(Dll.Name, CallingConvention = CallingConvention.Cdecl, EntryPoint = "add_scalar")]

@@ -26,16 +26,18 @@ public class NeuralOptimizationContext : IOptimizationContext
    public void AllocateMemoryForTrainingSet(MatrixStorage[] weights, int samples)
    {
        int layers = weights.Length + 1;
+
+       var allocator = weights[0].Allocator;
        
-       BatchMatrixHelper.InitializeBatchAsMatrixArray(out _errorBatch, out _errors,
+       BatchMatrixHelper.InitializeBatchAsMatrixArray(allocator, out _errorBatch, out _errors,
            layers - 1, i => samples, i => weights[i].Rows, 
            BufferDataType.Double, "errors");
        
-       BatchMatrixHelper.InitializeBatchAsMatrixArray(out _errorsTransposedBatch, out _errorsTransposed, 
+       BatchMatrixHelper.InitializeBatchAsMatrixArray(allocator, out _errorsTransposedBatch, out _errorsTransposed, 
            layers - 1, i => weights[i].Rows, i => samples, 
            BufferDataType.Double, "errorsTransposed");
        
-       BatchMatrixHelper.InitializeBatchAsMatrixArray(out _errorsBiasedBatch, out _errorsBiased, 
+       BatchMatrixHelper.InitializeBatchAsMatrixArray(allocator, out _errorsBiasedBatch, out _errorsBiased, 
            layers - 2, i => samples, i=> weights[i].Rows + 1, 
            BufferDataType.Double, "errorsTransposed");
    }

@@ -1,15 +1,10 @@
-using System.Diagnostics;
-using System.Threading.Channels;
 using Axon.Common.LinearAlgebra;
-using Axon.Cuda.Buffers;
-using Axon.Cuda.Common.Interop;
+using Axon.Cuda.Common.Buffers;
+using Axon.Cuda.Debug;
 using Axon.Cuda.Operations;
 using Axon.Learning.Neural;
-using Axon.Optimization.Algorithms;
-using Microsoft.VisualBasic.FileIO;
+using Axon.Optimization.Algorithms;using MathNet.Numerics.LinearAlgebra.Storage;
 
-MatrixStorage.BufferFactory = new GlobalMemoryAllocator();
-MatrixStorage.Operations = new GpuMatrixOperations();
 
 var nn = NeuralNetworkBuilder.Create()
     .AddLayer(784)
@@ -17,12 +12,15 @@ var nn = NeuralNetworkBuilder.Create()
     .AddLayer(10)
     .UseDistribution((float) Math.Sqrt(6))
     .UseRegularization(6.75f)
+    .WithBufferAllocator(new GlobalMemoryAllocator())
+    .WithHardwareAcceleration(new CudaMatrixAcceleration())
     .Build();
 
 int samples = 60000;
 
-var x = new MatrixStorage(samples, 784);
-var y = new MatrixStorage(samples, 10);
+var xUnbiased = new MatrixStorage(samples, 784, new GlobalMemoryAllocator());
+var x = new MatrixStorage(samples, 785, new GlobalMemoryAllocator());
+var y = new MatrixStorage(samples, 10, new GlobalMemoryAllocator());
 
 using var rd = new StreamReader("mnist_train.csv");
 int line = -1;
@@ -40,22 +38,20 @@ while (!rd.EndOfStream && line <= samples)
     
         var label = dd[0];
         cpuY[(int) label * samples + (line - 1)] = 1;
-        // cpuY[(line - 1) * 10 + (int) label] = 1;
         for (int i = 0; i < 784; ++i)
         {
             cpuX[i * samples + (line - 1)] = dd[1 + i] / 256.0f;
-            // cpuX[(line - 1) * 784 + i] = dd[1 + i] / 256.0f;
         }
     }
 }
 
-x.Buffer.Upload(cpuX);
+xUnbiased.Buffer.Upload(cpuX);
 y.Buffer.Upload(cpuY);
 
 var assert = new CudaAssert();
 
-x = x.InsertColumn(1.0f);
-var procedure = new GradientDescent<NeuralOptimizationContext, NeuralPredictionContext>(2.9f, 2000);
+new CudaMatrixAcceleration().InsertColumn(xUnbiased, x, 1.0f);
+var procedure = new GradientDescent<NeuralOptimizationContext, NeuralPredictionContext>(2.9f, 2000, MatrixComputeContext.Create(new CudaMatrixAcceleration()));
 procedure.Optimize(nn, x, y);
 
 using var rd2 = new StreamReader("mnist_test.csv");
@@ -65,8 +61,8 @@ int wrong = 0;
 
 var predictionContext = new NeuralPredictionContext();
 predictionContext.AllocateMemoryForPredictionBatch(nn.Parameters, 1);
-MatrixStorage prediction = new MatrixStorage(1, 784);
-MatrixStorage predictionBiased = new MatrixStorage(1, 784 + 1);
+MatrixStorage prediction = new MatrixStorage(1, 784, new GlobalMemoryAllocator());
+MatrixStorage predictionBiased = new MatrixStorage(1, 784 + 1, new GlobalMemoryAllocator());
 
 while (!rd2.EndOfStream)
 {
@@ -80,10 +76,10 @@ while (!rd2.EndOfStream)
         for (int i = 0; i < 784; ++i)
             cpuData[i] = dd[1 + i] / 256.0f;
         prediction.Buffer.Upload(cpuData);
-        prediction.InsertColumn(1.0f, predictionBiased);
+        new CudaMatrixAcceleration().InsertColumn(prediction, predictionBiased, 1.0f);
         
         var result = nn.FeedForward(predictionBiased, predictionContext);
-        var buffer = result.Buffer.Read()!;
+        var buffer = result.Buffer.CopyToHost()!;
         var output = Math.Round(buffer[(int)label]);
         
         if (output == 0) wrong++;
@@ -91,5 +87,4 @@ while (!rd2.EndOfStream)
     }
 }
 
-Console.WriteLine("Accuracy: {0:F2}", (float)correct / (correct + wrong) * 100);
-Console.WriteLine($"Correct {correct} from {correct + wrong}");
+Console.WriteLine("Accuracy: {0:F2}%", (float)correct / (correct + wrong) * 100);

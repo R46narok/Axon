@@ -2,11 +2,9 @@
 using System.Runtime.InteropServices;
 using Axon.Cuda.Common;
 using Axon.Cuda.Common.Execution;
-using Axon.Cuda.Common.Interop;
 
 namespace Axon.Cuda.Kernels;
 
-[KernelEntryPoint("subtract_scalar")]
 public class ScalarSubtractionKernel : KernelBase<ScalarKernelOptions>
 {
     [DllImport(Dll.Name, CallingConvention = CallingConvention.Cdecl, EntryPoint = "subtract_scalar")]

@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using Axon.Cuda.Buffers;
 using Axon.Cuda.Common;
 using Axon.Cuda.Common.Execution;
-using Axon.Cuda.Common.Interop;
 
 namespace Axon.Cuda.Kernels;
 
-[KernelEntryPoint("pointwise_addition")]
 public class PointwiseAdditionKernel : KernelBase<PointwiseKernelOptions>
 {
     [DllImport(Dll.Name, CallingConvention = CallingConvention.Cdecl, EntryPoint = "pointwise_addition")]

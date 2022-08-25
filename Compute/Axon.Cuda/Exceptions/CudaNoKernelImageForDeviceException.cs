@@ -1,4 +1,4 @@
-﻿using Axon.Cuda.Common.Interop;
+﻿using Axon.Cuda.Debug;
 
 namespace Axon.Cuda.Exceptions;
 

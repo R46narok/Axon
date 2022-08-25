@@ -1,9 +1,9 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using Axon.Common.Interfaces;
+using Axon.Cuda.Common;
 using Axon.Cuda.Exceptions;
 
-namespace Axon.Cuda.Common.Interop;
+namespace Axon.Cuda.Debug;
 
 public class CudaAssert : IAssert
 {

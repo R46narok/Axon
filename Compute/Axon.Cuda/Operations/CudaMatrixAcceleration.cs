@@ -2,22 +2,23 @@
 using Axon.Common.Buffers;
 using Axon.Common.Interfaces;
 using Axon.Common.LinearAlgebra;
-using Axon.Cuda.Buffers;
 using Axon.Cuda.Common;
+using Axon.Cuda.Common.Buffers;
 using Axon.Cuda.Common.Execution;
+using Axon.Cuda.Debug;
 using Axon.Cuda.Kernels;
-using Axon.Cuda.Nvtx;
 
 namespace Axon.Cuda.Operations;
 
-public class GpuMatrixOperations : IMatrixHardwareAcceleration
+public class CudaMatrixAcceleration : IMatrixHardwareAcceleration
 {
     public IRange GetRange () => new NvtxRange();
 
+    private readonly GlobalMemoryAllocator _allocator = new();
     
     public MatrixStorage Multiply(MatrixStorage first, MatrixStorage second)
     {
-        var output = new MatrixStorage(first.Rows, second.Columns);
+        var output = new MatrixStorage(first.Rows, second.Columns, _allocator);
         Multiply(first, second, output);
         return output;
     }
@@ -30,7 +31,7 @@ public class GpuMatrixOperations : IMatrixHardwareAcceleration
 
     public MatrixStorage Add(MatrixStorage input, float scalar)
     {
-        var output = new MatrixStorage(input.Rows, input.Columns);
+        var output = new MatrixStorage(input.Rows, input.Columns, _allocator);
         Add(input, output, scalar);
         return output;
     }
@@ -43,7 +44,7 @@ public class GpuMatrixOperations : IMatrixHardwareAcceleration
 
     public float Sum(MatrixStorage matrix)
     {
-        var output = new GpuBuffer(new BufferDescriptor {ByteWidth = sizeof(float)});
+        var output = new GlobalMemoryBuffer(new BufferDescriptor {ByteWidth = sizeof(float)});
         var options = new SumKernelOptions(matrix, output);
         InvokeKernel<SumKernel, SumKernelOptions>(options);
 
@@ -66,7 +67,7 @@ public class GpuMatrixOperations : IMatrixHardwareAcceleration
 
     public MatrixStorage PointwiseLog(MatrixStorage matrix)
     {
-        var output = new MatrixStorage(matrix.Rows, matrix.Columns);
+        var output = new MatrixStorage(matrix.Rows, matrix.Columns, _allocator);
         PointwiseLog(matrix, output);
         return output;
     }
@@ -97,7 +98,7 @@ public class GpuMatrixOperations : IMatrixHardwareAcceleration
 
     public MatrixStorage InsertColumn(MatrixStorage matrix, float value)
     {
-        var output = new MatrixStorage(matrix.Rows, matrix.Columns + 1);
+        var output = new MatrixStorage(matrix.Rows, matrix.Columns + 1, _allocator);
         InsertColumn(matrix, output, value);
         return output;
     }
@@ -110,7 +111,7 @@ public class GpuMatrixOperations : IMatrixHardwareAcceleration
 
     public MatrixStorage RemoveColumn(MatrixStorage matrix)
     {
-        var output = new MatrixStorage(matrix.Rows, matrix.Columns - 1);
+        var output = new MatrixStorage(matrix.Rows, matrix.Columns - 1, _allocator);
         RemoveColumn(matrix, output);
         return output;
     }
@@ -123,7 +124,7 @@ public class GpuMatrixOperations : IMatrixHardwareAcceleration
 
     public MatrixStorage InsertRow(MatrixStorage matrix, float value)
     {
-        var output = new MatrixStorage(matrix.Rows + 1, matrix.Columns);
+        var output = new MatrixStorage(matrix.Rows + 1, matrix.Columns, _allocator);
         InsertRow(matrix, output, value);
         return output;
     }
@@ -131,7 +132,7 @@ public class GpuMatrixOperations : IMatrixHardwareAcceleration
 
     public MatrixStorage Add(MatrixStorage first, MatrixStorage second)
     {
-        var output = new MatrixStorage(first.Rows, first.Columns);
+        var output = new MatrixStorage(first.Rows, first.Columns, _allocator);
         Add(first, second, output);
         return output;
     }
@@ -144,7 +145,7 @@ public class GpuMatrixOperations : IMatrixHardwareAcceleration
     
     public MatrixStorage Subtract(MatrixStorage first, MatrixStorage second)
     {
-        var output = new MatrixStorage(first.Rows, first.Columns);
+        var output = new MatrixStorage(first.Rows, first.Columns, _allocator);
         Subtract(first, second, output);
         return output;
     }
@@ -157,7 +158,7 @@ public class GpuMatrixOperations : IMatrixHardwareAcceleration
 
     public MatrixStorage Subtract(MatrixStorage first, MatrixStorage second, float scale)
     {
-        var output = new MatrixStorage(first.Rows, first.Columns);
+        var output = new MatrixStorage(first.Rows, first.Columns, _allocator);
         Subtract(first, second, output, scale);
         return output;
     }
@@ -170,7 +171,7 @@ public class GpuMatrixOperations : IMatrixHardwareAcceleration
     
     public MatrixStorage PointwiseMultiply(MatrixStorage first, MatrixStorage second)
     {
-        var output = new MatrixStorage(first.Rows, first.Columns);
+        var output = new MatrixStorage(first.Rows, first.Columns, _allocator);
         PointwiseMultiply(first, second, output);
         return output;
     }
@@ -183,7 +184,7 @@ public class GpuMatrixOperations : IMatrixHardwareAcceleration
 
     public MatrixStorage Transpose(MatrixStorage matrix)
     {
-        var output = new MatrixStorage(matrix.Columns, matrix.Rows);
+        var output = new MatrixStorage(matrix.Columns, matrix.Rows, _allocator);
         Transpose(matrix, output);
         return output;
     }

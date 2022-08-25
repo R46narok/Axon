@@ -11,12 +11,14 @@ public class GradientDescent<T, U> : IOptimizationProcedure<T, U>
     where U : IPredictionContext, new()
 {
     private readonly int _iterations;
+    private readonly IMatrixComputationSelectionStage _computeContext;
     private readonly float _learningRate;
 
-    public GradientDescent(float learningRate, int iterations)
+    public GradientDescent(float learningRate, int iterations, IMatrixComputationSelectionStage computeContext)
     {
         _learningRate = learningRate;
         _iterations = iterations;
+        _computeContext = computeContext;
     }
 
     public void Optimize(ICostFunction<T, U> function, MatrixStorage x, MatrixStorage y)
@@ -25,7 +27,7 @@ public class GradientDescent<T, U> : IOptimizationProcedure<T, U>
         InitializeDerivatives(function.Parameters, out var derivatives);
         InitializeOptimizationContext(function.Parameters, x, out var optimizationContext);
         InitializePredictionContext(function.Parameters, x, out var predictionContext);
-        
+
         for (int i = 0; i < _iterations; ++i)
         {
             var parameters = function.Parameters;
@@ -33,14 +35,18 @@ public class GradientDescent<T, U> : IOptimizationProcedure<T, U>
             {
                 var w = parameters[j];
                 tempParameters[j].Buffer.Reset();
-        
-                w.Subtract(derivatives[j], tempParameters[j], _learningRate);
+
+                _computeContext.PerformOn(w).And(derivatives[j]).SubtractInto(tempParameters[j], _learningRate);
+                // w.Subtract(derivatives[j], tempParameters[j], _learningRate);
             }
         
             (function.Parameters, tempParameters) = (tempParameters, function.Parameters);
-        
+
             for (int j = 0; j < parameters.Length; ++j)
-                parameters[j].Transpose(function.ParametersTransposed[j]);
+            {
+                _computeContext.PerformOn(parameters[j]).Into(function.ParametersTransposed[j]).Transpose();
+            }
+                // parameters[j].Transpose(function.ParametersTransposed[j]);
             
             if (i == 0 ||(i + 1) % 500 == 0 || i + 1 == _iterations) 
                 Console.WriteLine($"Iteration {i + 1}");
@@ -63,22 +69,24 @@ public class GradientDescent<T, U> : IOptimizationProcedure<T, U>
     private void InitializeTempParameters(MatrixStorage[] parameters, out MatrixStorage[] tempParameters)
     {
         var length = parameters.Length;
+        var allocator = parameters[0].Allocator;
         
         tempParameters = new MatrixStorage[length];
         for (int i = 0; i < length; ++i)
         {
-            tempParameters[i] = new MatrixStorage(parameters[i].Rows, parameters[i].Columns);
+            tempParameters[i] = new MatrixStorage(parameters[i].Rows, parameters[i].Columns, allocator);
         }
     }
 
     private void InitializeDerivatives(MatrixStorage[] parameters, out MatrixStorage[] derivatives)
     {
         var length = parameters.Length;
-                
+        var allocator = parameters[0].Allocator;
+        
         derivatives = new MatrixStorage[length];
         for (int i = 0; i < length; ++i)
         {
-            derivatives[i] = new MatrixStorage(parameters[i].Rows, parameters[i].Columns);
+            derivatives[i] = new MatrixStorage(parameters[i].Rows, parameters[i].Columns, allocator);
         }
     }
 }

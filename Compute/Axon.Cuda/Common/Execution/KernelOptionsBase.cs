@@ -1,8 +1,8 @@
-﻿using Axon.Cuda.Buffers;
+﻿using Axon.Cuda.Common.Buffers;
 
 namespace Axon.Cuda.Common.Execution;
 
 public class KernelOptionsBase
 {
-    public GpuBuffer Output { get; set; } 
+    public GlobalMemoryBuffer Output { get; set; } 
 }

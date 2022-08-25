@@ -7,5 +7,5 @@ public interface IBufferAllocator
     IBuffer Allocate(BufferDescriptor descriptor);
     void Deallocate(IBuffer buffer);
     
-    IBuffer TakeOwnership(IntPtr ptr, BufferDescriptor descriptor);
+    IBuffer TakeOwnership(IBuffer buffer, BufferDescriptor descriptor);
 }

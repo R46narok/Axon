@@ -12,7 +12,8 @@ public class NeuralNetwork : ICostFunction<NeuralOptimizationContext, NeuralPred
     private readonly int[] _layers;
     private readonly float _regularization;
     private readonly IMatrixHardwareAcceleration _acceleration;
-
+    private readonly IBufferAllocator _allocator;
+    
     private MatrixStorage[] _weights = null!;
     private MatrixStorage[] _weightsReg = null!;
     private MatrixStorage[] _weightsTransposed = null!;
@@ -27,8 +28,9 @@ public class NeuralNetwork : ICostFunction<NeuralOptimizationContext, NeuralPred
 
         _layers = options.Layers;
         _regularization = options.Regularization;
-        _acceleration = MatrixStorage.Operations;
-
+        _acceleration = options.Acceleration;
+        _allocator = options.Allocator;
+        
         OutputLayerIdx = _layers.Length - 1;
         
         ValidateNetworkArchitecture();
@@ -49,16 +51,20 @@ public class NeuralNetwork : ICostFunction<NeuralOptimizationContext, NeuralPred
         _weightsReg = new MatrixStorage[length];
         _weightsTransposed = new MatrixStorage[length];
 
+        var compute = MatrixComputeContext.Create(_acceleration);
         for (int i = 0; i < length; ++i)
         {
             var cpuBuffer = new float[_layers[i + 1] * (_layers[i] + 1)];
             for (int j = 0; j < cpuBuffer.Length; ++j)
                 cpuBuffer[j] = distribution.Next();
 
-            _weights[i] = new MatrixStorage(_layers[i + 1], _layers[i] + 1);
-            _weightsReg[i] = new MatrixStorage(_layers[i + 1], _layers[i] + 1);
+            _weights[i] = new MatrixStorage(_layers[i + 1], _layers[i] + 1, _allocator);
+            _weightsTransposed[i] = new MatrixStorage(_layers[i] + 1, _layers[i + 1], _allocator);
+            
+            _weightsReg[i] = new MatrixStorage(_layers[i + 1], _layers[i] + 1, _allocator);
+            
             _weights[i].Buffer.Upload(cpuBuffer);
-            _weightsTransposed[i] = _weights[i].Transpose();
+            compute.PerformOn(_weights[i]).Into(_weightsTransposed[i]).Transpose();
         }
     }
 
@@ -68,7 +74,7 @@ public class NeuralNetwork : ICostFunction<NeuralOptimizationContext, NeuralPred
         _derivatives = new MatrixStorage[length];
 
         for (int i = 0; i < length; ++i)
-            _derivatives[i] = new MatrixStorage(_layers[i + 1], _layers[i] + 1);
+            _derivatives[i] = new MatrixStorage(_layers[i + 1], _layers[i] + 1, _allocator);
     }
     
     /// <summary>
@@ -183,42 +189,41 @@ public class NeuralNetwork : ICostFunction<NeuralOptimizationContext, NeuralPred
         }
         
         // Regularization
-
-
-        _weights[0].Multiply((_regularization / samples), _weightsReg[0]);
-        _weights[1].Multiply((_regularization / samples), _weightsReg[1]);
-        
-        _derivatives[0].Add(_weightsReg[0], _derivatives[0]);
-        _derivatives[1].Add(_weightsReg[1], _derivatives[1]);
+        for (int i = InputLayerIdx; i < OutputLayerIdx; ++i)
+        {
+            compute.PerformOn(_weights[i]).Into(_weightsReg[i]).MultiplyBy(_regularization / samples);
+            compute.PerformOn(_derivatives[i]).And(_weightsReg[i]).AddInto(_derivatives[i]);
+        }
     }
 
     public float ComputeCost(MatrixStorage x, MatrixStorage y, NeuralPredictionContext predictionContext)
     {
-        var h = FeedForward(x, predictionContext);
-        var compute = MatrixComputeContext.Create(_acceleration);
-        
-        const int hIdx = 0;
-        const int yIdx = 1;
-
-        var invertedOutput = predictionContext.InvertedOutput;
-        
-        compute.PerformOn(y).Into(invertedOutput[yIdx]).MultiplyBy(-1.0f);
-        compute.PerformOn(h).Into(invertedOutput[hIdx]).MultiplyBy(-1.0f);
-        compute.PerformOnSelf(h).Log();
-
-        invertedOutput[yIdx].PointwiseMultiply(h, h);
-        invertedOutput[yIdx].Add(1.0f, invertedOutput[yIdx]);
-        invertedOutput[hIdx].Add(1.0f, invertedOutput[hIdx]);
-
-        invertedOutput[hIdx].PointwiseLog(invertedOutput[hIdx]);
-        invertedOutput[yIdx].PointwiseMultiply(invertedOutput[hIdx], invertedOutput[yIdx]);
-        
-        h.Subtract(invertedOutput[yIdx], h);
-        
-        int samples = x.Rows;
-        var cost = h.Sum();
-        
-        return cost / samples;
+        // var h = FeedForward(x, predictionContext);
+        // var compute = MatrixComputeContext.Create(_acceleration);
+        //
+        // const int hIdx = 0;
+        // const int yIdx = 1;
+        //
+        // var invertedOutput = predictionContext.InvertedOutput;
+        //
+        // compute.PerformOn(y).Into(invertedOutput[yIdx]).MultiplyBy(-1.0f);
+        // compute.PerformOn(h).Into(invertedOutput[hIdx]).MultiplyBy(-1.0f);
+        // compute.PerformOnSelf(h).Log();
+        //
+        // invertedOutput[yIdx].PointwiseMultiply(h, h);
+        // invertedOutput[yIdx].Add(1.0f, invertedOutput[yIdx]);
+        // invertedOutput[hIdx].Add(1.0f, invertedOutput[hIdx]);
+        //
+        // invertedOutput[hIdx].PointwiseLog(invertedOutput[hIdx]);
+        // invertedOutput[yIdx].PointwiseMultiply(invertedOutput[hIdx], invertedOutput[yIdx]);
+        //
+        // h.Subtract(invertedOutput[yIdx], h);
+        //
+        // int samples = x.Rows;
+        // var cost = h.Sum();
+        //
+        // return cost / samples;
+        return 0.0f;
     }
 
 

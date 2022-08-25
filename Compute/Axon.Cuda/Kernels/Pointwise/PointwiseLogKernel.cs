@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using Axon.Cuda.Buffers;
 using Axon.Cuda.Common;
 using Axon.Cuda.Common.Execution;
-using Axon.Cuda.Common.Interop;
 
 namespace Axon.Cuda.Kernels;
 
-[KernelEntryPoint("pointwise_log")]
 public class PointwiseLogKernel : KernelBase<PointwiseOperationKernelOptions>
 {
     [DllImport(Dll.Name, CallingConvention = CallingConvention.Cdecl, EntryPoint = "pointwise_log")]

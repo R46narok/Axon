@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace Axon.Cuda.Common.Interop;
+namespace Axon.Cuda.Common;
 
 public static class Dll
 {

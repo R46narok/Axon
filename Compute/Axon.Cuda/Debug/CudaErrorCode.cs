@@ -1,4 +1,4 @@
-﻿namespace Axon.Cuda.Common.Interop;
+﻿namespace Axon.Cuda.Debug;
 
 public enum CudaErrorCode : int
 {

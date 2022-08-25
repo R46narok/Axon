@@ -8,8 +8,7 @@ public interface IBuffer : IDisposable
     public long ByteWidth { get; }
 
     public void Upload(float[] data);
-    public float[]? Read();
+    public float[]? CopyToHost();
     public void Reset();
 
-    public IntPtr Ptr { get; }
 }

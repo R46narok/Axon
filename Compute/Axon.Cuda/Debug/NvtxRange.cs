@@ -1,9 +1,8 @@
 ﻿using System.Runtime.InteropServices;
 using Axon.Common.Interfaces;
 using Axon.Cuda.Common;
-using Axon.Cuda.Common.Interop;
 
-namespace Axon.Cuda.Nvtx;
+namespace Axon.Cuda.Debug;
 
 public class NvtxRange : IRange
 {

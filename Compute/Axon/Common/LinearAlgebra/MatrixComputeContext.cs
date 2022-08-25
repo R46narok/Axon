@@ -26,10 +26,11 @@ public interface IMatrixOutput
     public IMatrixComputationSelectionStage ApplySigmoidGradientFunction();
     public IMatrixComputationSelectionStage MultiplyBy(float scalar);
     public IMatrixComputationSelectionStage Add(float scalar);
+    public IMatrixComputationSelectionStage AddInto(MatrixStorage output);
     public IMatrixComputationSelectionStage Log();
     public IMatrixComputationSelectionStage PointwiseMultiplyInto(MatrixStorage output);
     public IMatrixComputationSelectionStage PointwiseSubtractInto(MatrixStorage output);
-
+    public IMatrixComputationSelectionStage SubtractInto(MatrixStorage output, float scalar);
     public IMatrixComputationSelectionStage Transpose();
 }
 
@@ -123,6 +124,13 @@ public class MatrixComputeContext : IMatrixComputationSelectionStage, IMatrixAdd
         return ResetOperands();
     }
 
+    public IMatrixComputationSelectionStage AddInto(MatrixStorage output)
+    {
+        EnsureBothOperandsNotNull();
+        _acceleration.Add(_firstOperand, _secondOperand, output);
+        return ResetOperands();
+    }
+
     public IMatrixComputationSelectionStage Log()
     {
        EnsureBothOperandsNotNull();
@@ -141,6 +149,13 @@ public class MatrixComputeContext : IMatrixComputationSelectionStage, IMatrixAdd
     {
         EnsureBothOperandsNotNull();
         _acceleration.Subtract(_firstOperand!, _secondOperand!, output);
+        return ResetOperands();
+    }
+
+    public IMatrixComputationSelectionStage SubtractInto(MatrixStorage output, float scalar)
+    {
+        EnsureBothOperandsNotNull();
+        _acceleration.Subtract(_firstOperand!, _secondOperand!, output, scalar);
         return ResetOperands();
     }
 

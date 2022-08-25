@@ -6,7 +6,7 @@ namespace Axon.Helpers;
 
 public static class BatchMatrixHelper
 {
-    public static void InitializeBatchAsMatrixArray(out BufferBatch batch, out MatrixStorage[] matrices,
+    public static void InitializeBatchAsMatrixArray(IBufferAllocator allocator, out BufferBatch batch, out MatrixStorage[] matrices,
                int length, Func<int, int> rowFunction, Func<int, int> columnFunction,
                BufferDataType dataType, string name)
     {
@@ -14,10 +14,10 @@ public static class BatchMatrixHelper
         for (int i = 0; i < length; ++i)
             batchElements[i] = new BufferBatchElement(sizeof(float) * rowFunction(i) * columnFunction(i), dataType, name);
     
-        batch = new BufferBatch(MatrixStorage.BufferFactory, batchElements);
+        batch = new BufferBatch(allocator, batchElements);
         matrices = new MatrixStorage[length];
     
         for (int i = 0; i < length; ++i)
-            matrices[i] = new MatrixStorage(batch[i], rowFunction(i), columnFunction(i));
+            matrices[i] = new MatrixStorage(batch[i], rowFunction(i), columnFunction(i), allocator);
     }
 }

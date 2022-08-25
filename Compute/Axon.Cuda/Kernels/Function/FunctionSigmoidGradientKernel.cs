@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using Axon.Cuda.Buffers;
 using Axon.Cuda.Common;
 using Axon.Cuda.Common.Execution;
-using Axon.Cuda.Common.Interop;
 
 namespace Axon.Cuda.Kernels;
 
-[KernelEntryPoint("function_sigmoid_gradient")]
 public class FunctionSigmoidGradientKernel : KernelBase<FunctionKernelOptions>
 {
     [DllImport(Dll.Name, CallingConvention = CallingConvention.Cdecl, EntryPoint = "function_sigmoid_gradient")]

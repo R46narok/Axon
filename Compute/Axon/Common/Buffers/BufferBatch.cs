@@ -37,7 +37,7 @@ public class BufferBatch : IDisposable
         {
             var element = elements[i];
             var descriptor = new BufferDescriptor(element.ByteWidth, offset);
-            var buffer = _allocator.TakeOwnership(_memoryPool.Ptr, descriptor);
+            var buffer = _allocator.TakeOwnership(_memoryPool, descriptor);
 
             _buffers[i] = buffer;
             offset += element.ByteWidth;

@@ -1,11 +1,8 @@
 ﻿// ReSharper disable IdentifierTypo
 
-using System;
 using System.Runtime.InteropServices;
-using Axon.Cuda.Common;
-using Axon.Cuda.Common.Interop;
 
-namespace Axon.Cuda.Buffers;
+namespace Axon.Cuda.Common.Buffers;
 
 public static class GlobalMemory
 {

@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using Axon.Cuda.Buffers;
 using Axon.Cuda.Common;
 using Axon.Cuda.Common.Execution;
-using Axon.Cuda.Common.Interop;
 
 namespace Axon.Cuda.Kernels;
 
-[KernelEntryPoint("insert_column")]
 public class InsertColumnKernel : KernelBase<InsertKernelOptions>
 {
     [DllImport(Dll.Name, CallingConvention = CallingConvention.Cdecl, EntryPoint = "insert_column")]

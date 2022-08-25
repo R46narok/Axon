@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using Axon.Cuda.Common;
-using Axon.Cuda.Buffers;
 using Axon.Cuda.Common.Execution;
-using Axon.Cuda.Common.Interop;
 
 namespace Axon.Cuda.Kernels;
 
-[KernelEntryPoint("remove_column")]
 public class RemoveColumnKernel : KernelBase<RemoveKernelOptions>
 {
     [DllImport(Dll.Name, CallingConvention = CallingConvention.Cdecl, EntryPoint = "remove_column")]

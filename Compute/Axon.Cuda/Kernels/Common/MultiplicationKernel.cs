@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using Axon.Common.LinearAlgebra;
-using Axon.Cuda.Buffers;
 using Axon.Cuda.Common;
+using Axon.Cuda.Common.Buffers;
 using Axon.Cuda.Common.Execution;
-using Axon.Cuda.Common.Interop;
 
 namespace Axon.Cuda.Kernels;
 
 public class MultiplicationKernelOptions : KernelOptionsBase
 {
-    public GpuBuffer FirstOperand { get; set; }
-    public GpuBuffer SecondOperand { get; set; }
+    public GlobalMemoryBuffer FirstOperand { get; set; }
+    public GlobalMemoryBuffer SecondOperand { get; set; }
 
     public int FirstRows { get; set; }
     public int FirstColumns { get; set; }
@@ -23,9 +22,9 @@ public class MultiplicationKernelOptions : KernelOptionsBase
     
     public MultiplicationKernelOptions(MatrixStorage first, MatrixStorage second, MatrixStorage output)
     {
-        FirstOperand = first.Buffer as GpuBuffer;
-        SecondOperand = second.Buffer as GpuBuffer;
-        Output = output.Buffer as GpuBuffer;
+        FirstOperand = first.Buffer as GlobalMemoryBuffer;
+        SecondOperand = second.Buffer as GlobalMemoryBuffer;
+        Output = output.Buffer as GlobalMemoryBuffer;
 
         FirstRows = first.Rows;
         FirstColumns = first.Columns;
@@ -33,7 +32,6 @@ public class MultiplicationKernelOptions : KernelOptionsBase
     }
 }
 
-[KernelEntryPoint("multiply")]
 public class MultiplicationKernel : KernelBase<MultiplicationKernelOptions>
 {
     [DllImport(Dll.Name, CallingConvention = CallingConvention.Cdecl, EntryPoint = "multiply")]

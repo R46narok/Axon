@@ -1,22 +1,21 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using Axon.Common.LinearAlgebra;
-using Axon.Cuda.Buffers;
 using Axon.Cuda.Common;
+using Axon.Cuda.Common.Buffers;
 using Axon.Cuda.Common.Execution;
-using Axon.Cuda.Common.Interop;
 
 namespace Axon.Cuda.Kernels;
 
 public class SumKernelOptions : KernelOptionsBase
 {
-    public GpuBuffer Input { get; set; }
+    public GlobalMemoryBuffer Input { get; set; }
     public int Rows { get; set; }
     public int Columns { get; set; }
 
-    public SumKernelOptions(MatrixStorage input, GpuBuffer output)
+    public SumKernelOptions(MatrixStorage input, GlobalMemoryBuffer output)
     {
-        Input = input.Buffer as GpuBuffer;
+        Input = input.Buffer as GlobalMemoryBuffer;
         Rows = input.Rows;
         Columns = input.Columns;
         Output = output;
