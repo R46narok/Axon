@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <None Remove="Apollo.F1.Math.Cuda.Native.dll" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Axon\Axon.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Apollo.F1.Compute.Cuda.Native.dll" />
+      <None Remove="Axon.Cuda.Native.dll" />
+      <EmbeddedResource Include="Axon.Cuda.Native.dll">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+    </ItemGroup>
+
+</Project>

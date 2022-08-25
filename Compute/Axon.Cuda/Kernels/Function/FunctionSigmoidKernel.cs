@@ -1,0 +1,25 @@
+﻿using System;
+using System.Runtime.InteropServices;
+using Axon.Cuda.Buffers;
+using Axon.Cuda.Common;
+using Axon.Cuda.Common.Execution;
+using Axon.Cuda.Common.Interop;
+
+namespace Axon.Cuda.Kernels;
+
+
+[KernelEntryPoint("function_sigmoid")]
+public class FunctionSigmoidKernel : KernelBase<FunctionKernelOptions>
+{
+    [DllImport(Dll.Name, CallingConvention = CallingConvention.Cdecl, EntryPoint = "function_sigmoid")]
+    private static extern void FunctionSigmoid(IntPtr input, IntPtr output, int length);
+
+    public override void Invoke(FunctionKernelOptions options)
+    {
+        var input = options.Input.Ptr;
+        var output = options.Output.Ptr;
+        var length = options.Output.ByteWidth / sizeof(float);
+        
+        FunctionSigmoid(input, output, (int)length);
+    }
+}

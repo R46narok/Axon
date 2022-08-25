@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{3DB651F1-3D49-463B-9EE0-6C524E92AAE1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sandbox", "Sandbox", "{07A000BD-7046-468A-9CE3-26C3E41D8AC9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Axon", "Compute\Axon\Axon.csproj", "{E8C3031B-1E87-415D-8B4A-9AB401F93383}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Axon.Cuda", "Compute\Axon.Cuda\Axon.Cuda.csproj", "{2178AECA-6525-4DA1-A222-A3AB1376CDAC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Axon.Sandbox", "Services\Axon.Sandbox\Axon.Sandbox.csproj", "{57727429-3DAC-4675-9B98-25BF8B776C1D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E8C3031B-1E87-415D-8B4A-9AB401F93383}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8C3031B-1E87-415D-8B4A-9AB401F93383}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8C3031B-1E87-415D-8B4A-9AB401F93383}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8C3031B-1E87-415D-8B4A-9AB401F93383}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2178AECA-6525-4DA1-A222-A3AB1376CDAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2178AECA-6525-4DA1-A222-A3AB1376CDAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2178AECA-6525-4DA1-A222-A3AB1376CDAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2178AECA-6525-4DA1-A222-A3AB1376CDAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57727429-3DAC-4675-9B98-25BF8B776C1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57727429-3DAC-4675-9B98-25BF8B776C1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57727429-3DAC-4675-9B98-25BF8B776C1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57727429-3DAC-4675-9B98-25BF8B776C1D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E8C3031B-1E87-415D-8B4A-9AB401F93383} = {3DB651F1-3D49-463B-9EE0-6C524E92AAE1}
+		{2178AECA-6525-4DA1-A222-A3AB1376CDAC} = {3DB651F1-3D49-463B-9EE0-6C524E92AAE1}
+		{57727429-3DAC-4675-9B98-25BF8B776C1D} = {07A000BD-7046-468A-9CE3-26C3E41D8AC9}
+	EndGlobalSection
+EndGlobal
