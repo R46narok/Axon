@@ -14,5 +14,7 @@
     <ItemGroup>
       <ProjectReference Include="..\..\Compute\Axon.Cuda\Axon.Cuda.csproj" />
       <ProjectReference Include="..\..\Compute\Axon\Axon.csproj" />
+      <ProjectReference Include="..\..\src\Axon.Cuda\Axon.Cuda.csproj" />
+      <ProjectReference Include="..\..\src\Axon\Axon.csproj" />
     </ItemGroup>
 </Project>
