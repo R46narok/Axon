@@ -9,7 +9,13 @@
 
 namespace Axon
 {
-    __global__ void PointwiseAdditionKernel(const float* pFirst, const float* pSecond, float* pOutput, uint32_t length);
+    __global__ void PointwiseMatrixAdditionKernel(const float* pFirst, const float* pSecond, float* pOutput, uint32_t length);
+    __global__ void PointwiseMatrixMultiplicationKernel(const float* pFirst, const float* pSecond, float* pOutput, uint32_t length);
+    __global__ void PointwiseMatrixSubtractionKernel(const float* pFirst, const float* pSecond, float* pOutput, uint32_t length);
+
+    __global__ void ScalarMatrixAdditionKernel(const float* pInput, float* pOutput, float scalar, uint32_t length);
+    __global__ void ScalarMatrixMultiplicationKernel(const float* pInput, float* pOutput, float scalar, uint32_t length);
+    __global__ void ScalarMatrixSubtractionKernel(const float* pInput, float* pOutput, float scalar, uint32_t length);
 }
 
 #endif //AXON_POINTWISEKERNELS_CUH
