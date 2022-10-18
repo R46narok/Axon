@@ -1,0 +1,7 @@
+//
+// Created by Acer on 18.10.2022 г..
+//
+#ifndef AXON_ACTIVATIONKERNELS_CUH
+#define AXON_ACTIVATIONKERNELS_CUH
+
+#endif //AXON_ACTIVATIONKERNELS_CUH

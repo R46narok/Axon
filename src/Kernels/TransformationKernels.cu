@@ -48,4 +48,40 @@ namespace Axon
             output[index_out] = input[index_in];
         }
     }
+
+
+    __global__ void MatrixInsertColumnKernel(float *pOutput, float* pInput, int width, int height, float value)
+    {
+        for (int i = blockIdx.x * blockDim.x + threadIdx.x; i < width; i += blockDim.x * gridDim.x)
+        {
+            for (int j = blockIdx.y * blockDim.y + threadIdx.y; j < height; j += blockDim.y * gridDim.y)
+            {
+//            int index_in = i * height + j;
+//            int index_out = i * (height + 1) + (j + 1);
+//
+//            pOutput[index_out] = pInput[index_in];
+//            pOutput[i * (height + 1) + 0] = value;
+                int index_in = j * width + i;
+                int index_out = (j + 1) * width + i;
+
+                pOutput[index_out] = pInput[index_in];
+                pOutput[0 * width + i] = value;
+            }
+        }
+    }
+
+    __global__ void MatrixRemoveColumnKernel(float* pInput, float* pOutput, int width, int height)
+    {
+        for (int i = blockIdx.x * blockDim.x + threadIdx.x; i < width; i += blockDim.x * gridDim.x)
+        {
+            for (int j = blockIdx.y * blockDim.y + threadIdx.y; j < height; j += blockDim.y * gridDim.y)
+            {
+//            int index_in = i * height + j;
+//            int index_out = i * (height - 1) + (j - 1);
+                int index_in = j * width + i;
+                int index_out = (j - 1) * width + i;
+                pOutput[index_out] = pInput[index_in];
+            }
+        }
+    }
 }

@@ -27,6 +27,9 @@ namespace Axon
         MatrixOperation Dot(const Matrix& other);
         MatrixOperation Transpose();
 
+        MatrixOperation InsertColumn(float value);
+        MatrixOperation RemoveColumn(int idx);
+
         void operator=(const MatrixOperation& operation);
 
         MatrixOperation operator+(const Matrix& other);
@@ -50,6 +53,9 @@ namespace Axon
     private:
         void DotImpl(const Matrix& other, const Matrix& output);
         void TransposeImpl(const Matrix& output);
+        void InsertColumnImpl(const Matrix& output, float value);
+        void RemoveColumnImpl(const Matrix& output, int idx);
+    private:
         static bool EqualDimensions(const Matrix& first, const Matrix& second);
         static bool EqualDimensions(const Matrix& first, const Matrix& second, const Matrix& third);
     private:
@@ -69,7 +75,8 @@ namespace Axon
         {
             MatrixAddition, MatrixSubtraction, MatrixMultiplication,
             MatrixScalarAddition, MatrixScalarSubtraction, MatrixScalarMultiplication,
-            Dot, Transpose
+            Dot, Transpose,
+            InsertColumn, RemoveColumn
         };
     };
 }
