@@ -119,6 +119,7 @@ namespace Axon
             case MatrixOperation::MatrixScalarSubtraction: operation.pFirst->ScalarSubtract(operation.scalar, *this);break;
             case MatrixOperation::MatrixScalarMultiplication: operation.pFirst->ScalarMultiply(operation.scalar, *this);break;
             case MatrixOperation::Dot: operation.pFirst->DotImpl(*operation.pSecond, *this);break;
+            case MatrixOperation::Log: operation.pFirst->LogImpl(*this);break;
             case MatrixOperation::Transpose: operation.pFirst->TransposeImpl(*this);break;
             case MatrixOperation::InsertColumn: operation.pFirst->InsertColumnImpl(*this, operation.scalar);break;
             case MatrixOperation::RemoveColumn: operation.pFirst->RemoveColumnImpl(*this, (int)operation.scalar);break;
@@ -247,5 +248,20 @@ namespace Axon
         auto pThis = GetDevicePointer();
         auto pOutput = (float*)output.GetDevicePointer();
         MatrixRemoveColumnKernel<<<512, 512>>>(pThis, pOutput, m_Rows, m_Columns);
+    }
+
+    MatrixOperation Matrix::Log()
+    {
+        MatrixOperation operation{};
+        operation.pFirst = this;
+        operation.flags = MatrixOperation::Log;
+        return operation;
+    }
+
+    void Matrix::LogImpl(const Matrix &output)
+    {
+        auto pThis = GetDevicePointer();
+        auto pOutput = (float*)output.GetDevicePointer();
+        MatrixLogKernel<<<512, 512>>>(pThis, pOutput, m_Rows * m_Columns);
     }
 }

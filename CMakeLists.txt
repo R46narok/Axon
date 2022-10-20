@@ -3,7 +3,7 @@ project(Axon CUDA)
 
 set(CMAKE_CUDA_STANDARD 20)
 
-add_library(Axon SHARED src/Core/Matrix.cu src/Core/Matrix.cuh src/Core/Interop.cuh src/Kernels/PointwiseKernels.cu src/Kernels/PointwiseKernels.cuh src/Kernels/TransformationKernels.cu src/Kernels/TransformationKernels.cuh src/Kernels/ActivationKernels.cu src/Kernels/ActivationKernels.cuh)
+add_library(Axon SHARED src/Core/Matrix.cu src/Core/Matrix.cuh src/Core/Interop.cuh src/Kernels/PointwiseKernels.cu src/Kernels/PointwiseKernels.cuh src/Kernels/TransformationKernels.cu src/Kernels/TransformationKernels.cuh src/Kernels/ActivationKernels.cu src/Kernels/ActivationKernels.cuh src/Core/Activation.cu src/Core/Activation.cuh src/Neural/NeuralNetwork.cu src/Neural/NeuralNetwork.cuh src/Neural/UniformDistribution.cu src/Neural/UniformDistribution.cuh)
 target_include_directories(Axon PUBLIC src/)
 target_compile_definitions(Axon PRIVATE AXON_CORE)
 

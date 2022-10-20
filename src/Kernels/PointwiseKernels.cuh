@@ -16,6 +16,8 @@ namespace Axon
     __global__ void ScalarMatrixAdditionKernel(const float* pInput, float* pOutput, float scalar, uint32_t length);
     __global__ void ScalarMatrixMultiplicationKernel(const float* pInput, float* pOutput, float scalar, uint32_t length);
     __global__ void ScalarMatrixSubtractionKernel(const float* pInput, float* pOutput, float scalar, uint32_t length);
+
+    __global__ void MatrixLogKernel(const float* pInput, float* pOutput, uint32_t length);
 }
 
 #endif //AXON_POINTWISEKERNELS_CUH

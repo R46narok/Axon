@@ -26,6 +26,7 @@ namespace Axon
 
         MatrixOperation Dot(const Matrix& other);
         MatrixOperation Transpose();
+        MatrixOperation Log();
 
         MatrixOperation InsertColumn(float value);
         MatrixOperation RemoveColumn(int idx);
@@ -50,14 +51,16 @@ namespace Axon
         [[nodiscard]] inline uint32_t GetColumns() const noexcept { return m_Columns; }
         [[nodiscard]] inline const float* GetDevicePointer() const noexcept { return thrust::raw_pointer_cast(m_Elements.data()); }
         [[nodiscard]] inline float* GetDevicePointer() noexcept { return thrust::raw_pointer_cast(m_Elements.data()); }
+
+    public:
+        static bool EqualDimensions(const Matrix& first, const Matrix& second);
+        static bool EqualDimensions(const Matrix& first, const Matrix& second, const Matrix& third);
     private:
         void DotImpl(const Matrix& other, const Matrix& output);
+        void LogImpl(const Matrix& output);
         void TransposeImpl(const Matrix& output);
         void InsertColumnImpl(const Matrix& output, float value);
         void RemoveColumnImpl(const Matrix& output, int idx);
-    private:
-        static bool EqualDimensions(const Matrix& first, const Matrix& second);
-        static bool EqualDimensions(const Matrix& first, const Matrix& second, const Matrix& third);
     private:
         uint32_t m_Rows;
         uint32_t m_Columns;
@@ -75,7 +78,7 @@ namespace Axon
         {
             MatrixAddition, MatrixSubtraction, MatrixMultiplication,
             MatrixScalarAddition, MatrixScalarSubtraction, MatrixScalarMultiplication,
-            Dot, Transpose,
+            Dot, Transpose, Log,
             InsertColumn, RemoveColumn
         };
     };

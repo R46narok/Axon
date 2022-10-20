@@ -66,4 +66,15 @@ namespace Axon
             pOutput[i] = pInput[i] - scalar;
         }
     }
+
+
+    __global__ void MatrixLogKernel(const float* pInput, float* pOutput, uint32_t length)
+    {
+        for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+             i < length;
+             i += blockDim.x * gridDim.x)
+        {
+            pOutput[i] = log(pInput[i]);
+        }
+    }
 }
