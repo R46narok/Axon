@@ -13,6 +13,7 @@ namespace Axon
     class AXON_API Matrix
     {
     public:
+        Matrix() = default;
         Matrix(uint32_t rows, uint32_t columns);
         ~Matrix() noexcept;
 
@@ -52,6 +53,7 @@ namespace Axon
         [[nodiscard]] inline const float* GetDevicePointer() const noexcept { return thrust::raw_pointer_cast(m_Elements.data()); }
         [[nodiscard]] inline float* GetDevicePointer() noexcept { return thrust::raw_pointer_cast(m_Elements.data()); }
 
+        static constexpr float Bias = 1.0f;
     public:
         static bool EqualDimensions(const Matrix& first, const Matrix& second);
         static bool EqualDimensions(const Matrix& first, const Matrix& second, const Matrix& third);

@@ -1,8 +1,8 @@
 //
 // Created by Acer on 19.10.2022 г..
 //
-#ifndef AXON_NEURALNETWORK_CUH
-#define AXON_NEURALNETWORK_CUH
+#ifndef _AXON_NEURAL_NETWORK_H
+#define _AXON_NEURAL_NETWORK_H
 
 #include "Core/Interop.cuh"
 #include "Core/Matrix.cuh"
@@ -18,13 +18,51 @@ namespace Axon
         std::vector<int> Layers;
     };
 
+    // TODO: Rename to DenseLayers or sth like that
     class AXON_API NeuralNetwork
     {
     public:
-        NeuralNetwork(const NeuralNetworkDescriptor& descriptor);
-    private:
+        explicit NeuralNetwork(const NeuralNetworkDescriptor& descriptor);
+        ~NeuralNetwork() noexcept = default;
 
+        struct FeedforwardDescriptor
+        {
+            bool computeGradients;
+            std::vector<Matrix> preactivation;
+            std::vector<Matrix> preactivationDerivatives;
+            std::vector<Matrix> activation;
+        };
+
+        struct BackpropagationDescriptor
+        {
+            std::vector<Matrix> errors;
+            std::vector<Matrix> errorsTransposed;
+            std::vector<Matrix> errorsBiased;
+        };
+
+        [[nodiscard]] Matrix& Feedforward(const Matrix& input, FeedforwardDescriptor& descriptor);
+        void Backpropagate(const Matrix& input, const Matrix& output, BackpropagationDescriptor& descriptor);
+
+        [[nodiscard]] inline const std::vector<Matrix>& GetWeights() const noexcept { return m_Weights; }
+
+        [[nodiscard]] inline bool IsOutputLayer(int idx) const noexcept { return idx == m_Layers.size() - 1;}
+        [[nodiscard]] inline bool IsInputLayer(int idx) const noexcept { return idx == 0; }
+        [[nodiscard]] inline bool IsHiddenLayer(int idx) const noexcept { return !IsInputLayer(idx) && !IsOutputLayer(idx); }
+
+        [[nodiscard]] inline bool IsNotOutputLayer(int idx) const noexcept { return !IsOutputLayer(idx); }
+        [[nodiscard]] inline bool IsNotInputLayer(int idx) const noexcept { return !IsInputLayer(idx); }
+        [[nodiscard]] inline bool IsNotHiddenLayer(int idx) const noexcept { return !IsHiddenLayer(idx); }
+    private:
+        void InitializeMatrices(float distribution);
+        void InitializeBiasTerms();
+    private:
+        std::vector<int> m_Layers;
+        std::vector<Matrix> m_Weights;
+        std::vector<Matrix> m_WeightsTransposed; // TODO: Maybe delete this
+        std::vector<Matrix> m_WeightsDerivatives;
+
+        float m_Regularization;
     };
 }
 
-#endif //AXON_NEURALNETWORK_CUH
+#endif //_AXON_NEURAL_NETWORK_H
