@@ -30,6 +30,7 @@ namespace Axon
             bool computeGradients;
             std::vector<Matrix> preactivation;
             std::vector<Matrix> preactivationDerivatives;
+            std::vector<Matrix> preactivationDerivativesBiased;
             std::vector<Matrix> activation;
         };
 
@@ -41,17 +42,21 @@ namespace Axon
         };
 
         [[nodiscard]] Matrix& Feedforward(const Matrix& input, FeedforwardDescriptor& descriptor);
-        void Backpropagate(const Matrix& input, const Matrix& output, BackpropagationDescriptor& descriptor);
+        void Backpropagate(const Matrix& input, const Matrix& output,
+                           BackpropagationDescriptor& descriptor, FeedforwardDescriptor& feedforwardDescriptor);
 
         [[nodiscard]] inline const std::vector<Matrix>& GetWeights() const noexcept { return m_Weights; }
 
-        [[nodiscard]] inline bool IsOutputLayer(int idx) const noexcept { return idx == m_Layers.size() - 1;}
-        [[nodiscard]] inline bool IsInputLayer(int idx) const noexcept { return idx == 0; }
+        [[nodiscard]] inline bool IsOutputLayer(int idx) const noexcept { return idx == GetOutputLayerIdx(); }
+        [[nodiscard]] inline bool IsInputLayer(int idx) const noexcept { return idx == GetInputLayerIdx(); }
         [[nodiscard]] inline bool IsHiddenLayer(int idx) const noexcept { return !IsInputLayer(idx) && !IsOutputLayer(idx); }
 
         [[nodiscard]] inline bool IsNotOutputLayer(int idx) const noexcept { return !IsOutputLayer(idx); }
         [[nodiscard]] inline bool IsNotInputLayer(int idx) const noexcept { return !IsInputLayer(idx); }
         [[nodiscard]] inline bool IsNotHiddenLayer(int idx) const noexcept { return !IsHiddenLayer(idx); }
+
+        [[nodiscard]] inline constexpr uint32_t GetInputLayerIdx() const noexcept { return 0; }
+        [[nodiscard]] inline uint32_t GetOutputLayerIdx() const noexcept { return m_Layers.size() - 1; }
     private:
         void InitializeMatrices(float distribution);
         void InitializeBiasTerms();

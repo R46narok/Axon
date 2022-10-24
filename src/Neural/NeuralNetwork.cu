@@ -78,8 +78,38 @@ namespace Axon
     }
 
     void NeuralNetwork::Backpropagate(const Matrix &input, const Matrix &output,
-                                      NeuralNetwork::BackpropagationDescriptor &descriptor)
+                                      NeuralNetwork::BackpropagationDescriptor &descriptor, NeuralNetwork::FeedforwardDescriptor& feedforwardDescriptor)
     {
+        auto& errors = descriptor.errors;
+        auto& errorsBiased = descriptor.errorsBiased;
+        auto& errorsTransposed = descriptor.errorsTransposed;
 
+        feedforwardDescriptor.computeGradients = true;
+        auto& prediction = Feedforward(input, feedforwardDescriptor);
+
+        auto &preactivation = feedforwardDescriptor.preactivation;
+        auto &preactivationDerivatives = feedforwardDescriptor.preactivationDerivatives;
+        auto &preactivationDerivativesBiased = feedforwardDescriptor.preactivationDerivativesBiased;
+
+        errors[1] = prediction - output;
+        for (uint32_t i = GetOutputLayerIdx() - 1; i >= GetInputLayerIdx(); ++i)
+        {
+            errorsBiased[i] = errors[i].Dot(m_Weights[i]);
+            preactivationDerivativesBiased[i - 1] = preactivationDerivatives[i - 1].InsertColumn(Matrix::Bias);
+
+            errorsBiased[i - 1] = errorsBiased[i - 1] * preactivationDerivativesBiased[i - 1];
+            errors[i - 1] = errorsBiased[i - 1].RemoveColumn(0);
+        }
+
+        auto* pLast = const_cast<Matrix*>(&input);
+        auto samples = (float)input.GetRows();
+        for (uint32_t i = 0; i < errors.size(); ++i)
+        {
+            errorsTransposed[i] = errors[i].Transpose();
+            m_WeightsDerivatives[i] = errorsTransposed[i].Dot(*pLast);
+            m_WeightsDerivatives[i] = m_WeightsDerivatives[i] * (1.0f / samples);
+
+            pLast = const_cast<Matrix*>(&preactivation[i]);
+        }
     }
 }

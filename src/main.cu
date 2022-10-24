@@ -5,10 +5,13 @@
 #include <thrust/host_vector.h>
 #include <iostream>
 
+using namespace Axon;
+
 int main()
 {
-    Axon::NeuralNetworkDescriptor descriptor {};
+    NeuralNetworkDescriptor descriptor {};
+
     descriptor.Layers = {700, 300, 10};
-    Axon::NeuralNetwork network(descriptor);
+    NeuralNetwork network(descriptor);
     return 0;
 }
