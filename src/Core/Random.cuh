@@ -1,7 +1,7 @@
 #ifndef _AXON_UNIFORM_DISTRIBUTION_H
 #define _AXON_UNIFORM_DISTRIBUTION_H
 
-#include "Core/Interop.cuh"
+#include "Core/Library.cuh"
 
 #include <thrust/random.h>
 #include <cmath>

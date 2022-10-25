@@ -5,7 +5,7 @@
 #define AXON_POINTWISEKERNELS_CUH
 
 #include <cstdint>
-#include "Core/Interop.cuh"
+#include "Core/Library.cuh"
 
 namespace Axon
 {

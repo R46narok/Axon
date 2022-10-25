@@ -1,8 +1,8 @@
 //
 // Created by Acer on 17.10.2022 г..
 //
-#ifndef AXON_INTEROP_CUH
-#define AXON_INTEROP_CUH
+#ifndef AXON_LIBRARY_CUH
+#define AXON_LIBRARY_CUH
 
 #ifdef AXON_CORE
 #define AXON_API __declspec(dllexport)
@@ -18,4 +18,4 @@ namespace Axon
     using precision_t = float;
 }
 
-#endif //AXON_INTEROP_CUH
+#endif //AXON_LIBRARY_CUH

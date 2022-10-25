@@ -4,7 +4,7 @@
 #ifndef AXON_ACTIVATIONKERNELS_CUH
 #define AXON_ACTIVATIONKERNELS_CUH
 
-#include "Core/Interop.cuh"
+#include "Core/Library.cuh"
 
 namespace Axon
 {

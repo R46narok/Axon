@@ -4,7 +4,7 @@
 #ifndef _AXON_NEURAL_NETWORK_H
 #define _AXON_NEURAL_NETWORK_H
 
-#include "Core/Interop.cuh"
+#include "Core/Library.cuh"
 #include "Core/Matrix.cuh"
 
 #include <vector>

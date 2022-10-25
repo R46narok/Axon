@@ -1,7 +1,7 @@
 #ifndef AXON_MATRIX_CUH
 #define AXON_MATRIX_CUH
 
-#include "Core/Interop.cuh"
+#include "Core/Library.cuh"
 
 #include <cstdint>
 #include <thrust/device_vector.h>

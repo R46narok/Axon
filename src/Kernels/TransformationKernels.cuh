@@ -4,7 +4,7 @@
 #ifndef AXON_TRANSFORMATIONKERNELS_CUH
 #define AXON_TRANSFORMATIONKERNELS_CUH
 
-#include "Core/Interop.cuh"
+#include "Core/Library.cuh"
 
 namespace Axon
 {

@@ -1,5 +1,5 @@
 #include "Neural/NeuralNetwork.cuh"
-#include "Neural/Random.cuh"
+#include "Core/Random.cuh"
 #include "Core/Activation.cuh"
 
 #include <iostream>
@@ -75,6 +75,8 @@ namespace Axon
                 pLast = const_cast<Matrix*>(&preactivation[i]);
             }
         }
+
+        return *pLast;
     }
 
     void NeuralNetwork::Backpropagate(const Matrix &input, const Matrix &output,
