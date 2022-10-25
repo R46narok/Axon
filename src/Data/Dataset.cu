@@ -67,7 +67,7 @@ namespace Axon
         return -1;
     }
 
-    void Dataset::Copy(const std::string &name, const Matrix &matrix, int classes)
+    void Dataset::Copy(const std::string &name, Matrix &matrix, int classes)
     {
         auto& host = m_HostBuffers[name];
 

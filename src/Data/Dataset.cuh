@@ -27,7 +27,7 @@ namespace Axon
     public:
         Dataset(const std::string& path, const std::initializer_list<CsvDescriptor>& descriptors);
 
-        void Copy(const std::string& name, const Matrix& matrix, int classes = -1);
+        void Copy(const std::string& name, Matrix& matrix, int classes = -1);
     private:
         void ProcessFile();
         void CalculateOffsets();
