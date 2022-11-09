@@ -70,18 +70,19 @@ namespace Axon
         }
     }
 
-    __global__ void MatrixRemoveColumnKernel(float* pInput, float* pOutput, int width, int height)
+    __global__ void MatrixRemoveColumnKernel(float* pOutput, const float* pInput, uint32_t width, uint32_t height)
     {
-        for (int i = blockIdx.x * blockDim.x + threadIdx.x; i < width; i += blockDim.x * gridDim.x)
+        for (uint32_t i = blockIdx.x * blockDim.x + threadIdx.x; i < width; i += blockDim.x * gridDim.x)
         {
-            for (int j = blockIdx.y * blockDim.y + threadIdx.y; j < height; j += blockDim.y * gridDim.y)
+            for (uint32_t j = blockIdx.y * blockDim.y + threadIdx.y; j < height; j += blockDim.y * gridDim.y)
             {
-//            int index_in = i * height + j;
-//            int index_out = i * (height - 1) + (j - 1);
-                int index_in = j * width + i;
-                int index_out = (j - 1) * width + i;
-                pOutput[index_out] = pInput[index_in];
-            }
+                if (j != 0)
+                {
+                    uint32_t index_in = j * width + i;
+                    uint32_t index_out = (j - 1) * (width - 1) + i;
+                    pOutput[index_out] = pInput[index_in];
+                }
+           }
         }
     }
 }

@@ -2,6 +2,8 @@
 #include "Kernels/PointwiseKernels.cuh"
 #include "Kernels/TransformationKernels.cuh"
 
+#include <iostream>
+
 namespace Axon
 {
     Matrix::Matrix(uint32_t rows, uint32_t columns)
@@ -14,13 +16,14 @@ namespace Axon
 
     bool Matrix::EqualDimensions(const Matrix& first, const Matrix& second)
     {
-        return first.m_Rows == second.m_Rows && first.m_Columns == second.m_Columns;
+        bool eq = first.m_Rows == second.m_Rows && first.m_Columns == second.m_Columns;
+        if (!eq) std::cout << "Wrong dimensions" << std::endl;
+        return eq;
     }
 
     bool Matrix::EqualDimensions(const Matrix& first, const Matrix& second, const Matrix& third)
     {
         return EqualDimensions(first, second) && EqualDimensions(first, third);
-
     }
 
     bool Matrix::PointwiseAdd(const Matrix &other, const Matrix &output)
@@ -247,7 +250,7 @@ namespace Axon
     {
         auto pThis = GetDevicePointer();
         auto pOutput = (float*)output.GetDevicePointer();
-        MatrixRemoveColumnKernel<<<512, 512>>>(pThis, pOutput, m_Rows, m_Columns);
+        MatrixRemoveColumnKernel<<<512, 512>>>(pOutput, pThis, m_Rows, m_Columns);
     }
 
     MatrixOperation Matrix::Log()

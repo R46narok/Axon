@@ -8,6 +8,7 @@
 #include "Core/Matrix.cuh"
 
 #include <vector>
+#include <iostream>
 
 namespace Axon
 {
@@ -32,7 +33,9 @@ namespace Axon
             std::vector<Matrix> preactivationDerivatives;
             std::vector<Matrix> preactivationDerivativesBiased;
             std::vector<Matrix> activation;
+
         };
+        void AllocateFeedforwardDescriptor(FeedforwardDescriptor* descriptor, uint32_t batchSize);
 
         struct BackpropagationDescriptor
         {
@@ -40,12 +43,16 @@ namespace Axon
             std::vector<Matrix> errorsTransposed;
             std::vector<Matrix> errorsBiased;
         };
+        void AllocateBackpropagationDescriptor(BackpropagationDescriptor* descriptor, uint32_t batchSize);
 
-        [[nodiscard]] Matrix& Feedforward(const Matrix& input, FeedforwardDescriptor& descriptor);
-        void Backpropagate(const Matrix& input, const Matrix& output,
-                           BackpropagationDescriptor& descriptor, FeedforwardDescriptor& feedforwardDescriptor);
 
-        [[nodiscard]] inline const std::vector<Matrix>& GetWeights() const noexcept { return m_Weights; }
+        [[nodiscard]] Matrix* Feedforward(const Matrix* input, FeedforwardDescriptor* descriptor);
+        void Backpropagate(const Matrix* input, const Matrix* output,
+                           BackpropagationDescriptor* descriptor, FeedforwardDescriptor* feedforwardDescriptor);
+
+        [[nodiscard]] inline std::vector<Matrix>& GetWeights() noexcept { return m_Weights; }
+        [[nodiscard]] inline std::vector<Matrix>& GetWeightsTransposed() noexcept { return m_WeightsTransposed; }
+        [[nodiscard]] inline std::vector<Matrix>& GetWeightsDerivatives() noexcept { return m_WeightsDerivatives; }
 
         [[nodiscard]] inline bool IsOutputLayer(int idx) const noexcept { return idx == GetOutputLayerIdx(); }
         [[nodiscard]] inline bool IsInputLayer(int idx) const noexcept { return idx == GetInputLayerIdx(); }
